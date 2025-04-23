@@ -1,0 +1,96 @@
+#ikili arama ağacı rand
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+struct node {
+    int data;
+    struct node *leftchild;
+    struct node *rightchild;
+};
+
+struct node *root = NULL;
+
+void insert(int data) {
+    struct node *tempNode = (struct node *)malloc(sizeof(struct node));
+    struct node *parent;
+    struct node *current;
+
+    tempNode->data = data;
+    tempNode->leftchild = NULL;
+    tempNode->rightchild = NULL;
+
+    if (root == NULL) {
+        root = tempNode;
+    } else {
+        current = root;
+        parent = NULL;
+        while (1) {
+            parent = current;
+            if (data < parent->data) {
+                current = current->leftchild;
+                if (current == NULL) {
+                    parent->leftchild = tempNode;
+                    return;
+                }
+            } else {
+                current = current->rightchild;
+                if (current == NULL) {
+                    parent->rightchild = tempNode;
+                    return;
+                }
+            }
+        }
+    }
+}
+
+void inorder_traversal(struct node *root) {
+    if (root != NULL) {
+        inorder_traversal(root->leftchild);
+        printf("%d ", root->data);
+        inorder_traversal(root->rightchild);
+    }
+}
+
+struct node *searchNode(struct node *node, int ae) {
+    if (node == NULL || node->data == ae) {
+        return node;
+    }
+    if (ae < node->data) {
+        return searchNode(node->leftchild, ae);
+    } else {
+        return searchNode(node->rightchild, ae);
+    }
+}
+
+int main() {
+    int i, ae;
+    int array[1000];
+
+    srand(time(NULL));
+
+    for (i = 0; i < 1000; i++) {
+        array[i] = rand() % 1000;
+    }
+
+    for (i = 0; i < 1000; i++) {
+        insert(array[i]);
+    }
+
+    printf("\nAgacin sirali dolasimi: ");
+    inorder_traversal(root);
+
+    printf("\nAramak istediginiz elemani girin: ");
+    scanf("%d", &ae);
+
+    struct node *aramasonucu = searchNode(root, ae);
+
+    if (aramasonucu != NULL) {
+        printf("Eleman %d agacta bulundu.\n", aramasonucu->data);
+    } else {
+        printf("Eleman %d agacta bulunamadi.\n", ae);
+    }
+
+    return 0;
+}
